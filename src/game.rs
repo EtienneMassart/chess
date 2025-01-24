@@ -31,5 +31,11 @@ impl Game {
             },
         }
     }
-}
+    
 
+    pub fn make_move(&mut self, start: (usize, usize), end: (usize, usize)) {
+        self.board.make_move(start, end, &mut self.game_state);
+
+        //self.modify_game_state();
+    }
+}

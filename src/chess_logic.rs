@@ -134,3 +134,120 @@ impl Board {
         }
     }
 }
+
+    pub fn check_move(&self, start: (usize, usize), end: (usize, usize), game_state: &game::GameState) -> Result<(), &'static str> {
+        if start.0 > 7 || start.1 > 7  {
+            return Err("Start square out of bounds");
+        }
+        if end.0 > 7 || end.1 > 7 {
+            return Err("End square out of bounds");
+        }
+
+        let piece = self.grid[start.0][start.1].ok_or("No piece at start square")?;
+
+
+        // Check if the start square is occupied by a piece of the correct color
+        if piece.color() != game_state.turn {
+            return Err("Start square occupied by piece of wrong color");
+        }
+
+        // Check if the end square is occupied by a piece of the same color
+        if let Some(end_piece) = self.grid[end.0][end.1] {
+            if end_piece.color() == piece.color() {
+                return Err("End square occupied by piece of same color");
+            }
+        }
+
+        match piece {
+            Piece::Pawn(_) => {
+                self.check_pawn_move(start, end, game_state);
+            }
+
+            Piece::Knight(_) => {
+                self.check_knight_move(start, end);
+            }
+
+            Piece::Bishop(_) => {
+                self.check_bishop_move(start, end);
+            }
+
+            Piece::Rook(_) => {
+                self.check_rook_move(start, end);
+            }
+
+            Piece::Queen(_) => {
+                self.check_queen_move(start, end);
+            }
+
+            Piece::King(_) => {
+                self.check_king_move(start, end, game_state);
+            }
+            
+        }
+        return Ok(());
+        
+
+        
+    }
+
+    pub fn move_piece (&mut self, start: (usize, usize), end: (usize, usize)) {
+        let piece = self.grid[start.0][start.1].unwrap();
+        let taken_piece = self.grid[end.0][end.1];
+
+        if taken_piece.is_some() {
+            let taken_piece = taken_piece.unwrap();
+            self.pieces.get_mut(&taken_piece).unwrap().remove(&end);
+        }
+
+
+        self.grid[start.0][start.1] = None;
+        self.grid[end.0][end.1] = Some(piece);
+
+        self.pieces.get_mut(&piece).unwrap().remove(&start);
+        self.pieces.get_mut(&piece).unwrap().insert(end);
+
+        // move the rook in case of castling
+        if piece == Piece::King(Color::White) && start == (0, 4) {
+            let rook = Piece::Rook(Color::White);
+            if end == (0, 6) {
+                self.grid[0][7] = None;
+                self.grid[0][5] = Some(rook);
+                self.pieces.get_mut(&rook).unwrap().remove(&(0, 7));
+                self.pieces.get_mut(&rook).unwrap().insert((0, 5));
+            } if end == (0, 2) {
+                self.grid[0][0] = None;
+                self.grid[0][3] = Some(rook);
+                self.pieces.get_mut(&rook).unwrap().remove(&(0, 0));
+                self.pieces.get_mut(&rook).unwrap().insert((0, 3));
+            }
+        } else if piece == Piece::King(Color::Black) && start == (7, 4) {
+            let rook = Piece::Rook(Color::Black);
+            if end == (7, 6) {
+                self.grid[7][7] = None;
+                self.grid[7][5] = Some(rook);
+                self.pieces.get_mut(&rook).unwrap().remove(&(7, 7));
+                self.pieces.get_mut(&rook).unwrap().insert((7, 5));
+            } if end == (7, 2) {
+                self.grid[7][0] = None;
+                self.grid[7][3] = Some(rook);
+                self.pieces.get_mut(&rook).unwrap().remove(&(7, 0));
+                self.pieces.get_mut(&rook).unwrap().insert((7, 3));
+            }
+        }
+
+        // take the pawn in case of en passant
+        if piece == Piece::Pawn(Color::White) && start.1 != end.1 && taken_piece.is_none(){
+            self.grid[start.0][end.1] = None;
+            self.pieces.get_mut(&Piece::Pawn(Color::Black)).unwrap().remove(&(start.0, end.1));
+        } else if piece == Piece::Pawn(Color::Black) && start.1 != end.1 && taken_piece.is_none(){
+            self.grid[start.0][end.1] = None;
+            self.pieces.get_mut(&Piece::Pawn(Color::White)).unwrap().remove(&(start.0, end.1));
+        }
+            
+    }
+
+    pub fn make_move(&mut self, start: (usize, usize), end: (usize, usize), game_state: &mut game::GameState) {
+        self.check_move(start, end, game_state);
+    }
+
+}
