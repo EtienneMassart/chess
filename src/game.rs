@@ -13,7 +13,7 @@ pub struct GameState {
 
 #[derive(Debug)]
 pub struct Game {
-    board: chess_logic::Board,
+    pub board: chess_logic::Board,
     pub game_state: GameState,
 }
 
@@ -33,9 +33,8 @@ impl Game {
     }
     
 
-    pub fn make_move(&mut self, start: (usize, usize), end: (usize, usize)) {
-        self.board.make_move(start, end, &mut self.game_state);
-
-        //self.modify_game_state();
+    pub fn make_move(&mut self, start: (usize, usize), end: (usize, usize)) -> Result<(), &'static str> {
+        self.board.make_move(start, end, &mut self.game_state)?;
+        Ok(())
     }
 }

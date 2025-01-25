@@ -173,31 +173,54 @@ impl Board {
             }
         }
 
-        match piece {
+        let is_valid_move = match piece {
             Piece::Pawn(_) => {
-                self.check_pawn_move(start, end, game_state);
+                self.check_pawn_move(start, end, game_state)
             }
 
             Piece::Knight(_) => {
-                self.check_knight_move(start, end);
+                self.check_knight_move(start, end)
             }
 
             Piece::Bishop(_) => {
-                self.check_bishop_move(start, end);
+                self.check_bishop_move(start, end)
             }
 
             Piece::Rook(_) => {
-                self.check_rook_move(start, end);
+                self.check_rook_move(start, end)
             }
 
             Piece::Queen(_) => {
-                self.check_queen_move(start, end);
+                self.check_queen_move(start, end)
             }
 
             Piece::King(_) => {
-                self.check_king_move(start, end, game_state);
+                self.check_king_move(start, end, game_state)
             }
             
+        };
+
+        if !is_valid_move {
+            return Err("Invalid move");
+        }
+
+        let mut temp_board = self.clone();
+
+        temp_board.move_piece(start, end); // ok because temp_board is a clone and we know there is a piece at start
+
+        if temp_board.verify_check(game_state.turn)? {
+            return Err("Move puts own king in check");
+        }
+
+        Ok(())
+
+
+
+        
+
+        
+    }
+        
     /// Should only be used if we know there is a piece at start
     pub fn move_piece (&mut self, start: (usize, usize), end: (usize, usize)) {
 
@@ -270,8 +293,50 @@ impl Board {
             
     }
 
-    pub fn make_move(&mut self, start: (usize, usize), end: (usize, usize), game_state: &mut game::GameState) {
-        self.check_move(start, end, game_state);
+    pub fn make_move(&mut self, start: (usize, usize), end: (usize, usize), game_state: &mut game::GameState)  -> Result<(), &'static str> {
+        self.check_move(start, end, game_state)?;
+
+        // update game state
+        if self.grid[start.0][start.1] == Some(Piece::King(Color::White)) {
+            game_state.white_castle_king_side = false;
+            game_state.white_castle_queen_side = false;
+        } else if self.grid[start.0][start.1] == Some(Piece::Rook(Color::White)) {
+            if start == (0, 0) {
+                game_state.white_castle_queen_side = false;
+            } else if start == (0, 7) {
+                game_state.white_castle_king_side = false;
+            }
+        } else if self.grid[start.0][start.1] == Some(Piece::King(Color::Black)) {
+            game_state.black_castle_king_side = false;
+            game_state.black_castle_queen_side = false;
+        } else if self.grid[start.0][start.1] == Some(Piece::Rook(Color::Black)) {
+            if start == (7, 0) {
+                game_state.black_castle_queen_side = false;
+            } else if start == (7, 7) {
+                game_state.black_castle_king_side = false;
+            }
+        }
+
+        if self.grid[start.0][start.1] == Some(Piece::Pawn(Color::White)) && start.0 == 1 && end.0 == 3 {
+            game_state.en_passant = Some((start.1, Color::White));
+        } else if self.grid[start.0][start.1] == Some(Piece::Pawn(Color::Black)) && start.0 == 6 && end.0 == 4 {
+            game_state.en_passant = Some((start.1, Color::Black));
+        } else {
+            game_state.en_passant = None;
+        }
+
+        game_state.turn = match game_state.turn {
+            Color::White => Color::Black,
+            Color::Black => Color::White,
+        };
+
+
+        self.move_piece(start, end);
+
+        Ok(())
+
+
+
     }
 
 }
