@@ -198,14 +198,9 @@ impl Board {
                 self.check_king_move(start, end, game_state);
             }
             
-        }
-        return Ok(());
-        
-
-        
-    }
-
+    /// Should only be used if we know there is a piece at start
     pub fn move_piece (&mut self, start: (usize, usize), end: (usize, usize)) {
+
         let piece = self.grid[start.0][start.1].unwrap();
         let taken_piece = self.grid[end.0][end.1];
 
@@ -214,12 +209,26 @@ impl Board {
             self.pieces.get_mut(&taken_piece).unwrap().remove(&end);
         }
 
+        // promotion of pawn, for now always promote to queen TODO: let player choose
 
-        self.grid[start.0][start.1] = None;
-        self.grid[end.0][end.1] = Some(piece);
-
-        self.pieces.get_mut(&piece).unwrap().remove(&start);
-        self.pieces.get_mut(&piece).unwrap().insert(end);
+        if piece == Piece::Pawn(Color::White) && end.0 == 7 {
+            self.grid[start.0][start.1] = None;
+            self.grid[end.0][end.1] = Some(Piece::Queen(Color::White));
+            self.pieces.get_mut(&Piece::Pawn(Color::White)).unwrap().remove(&start);
+            self.pieces.get_mut(&Piece::Queen(Color::White)).unwrap().insert(end);
+            return;
+        } else if piece == Piece::Pawn(Color::Black) && end.0 == 0 {
+            self.grid[start.0][start.1] = None;
+            self.grid[end.0][end.1] = Some(Piece::Queen(Color::Black));
+            self.pieces.get_mut(&Piece::Pawn(Color::Black)).unwrap().remove(&start);
+            self.pieces.get_mut(&Piece::Queen(Color::Black)).unwrap().insert(end);
+            return;
+        } else {
+            self.grid[start.0][start.1] = None;
+            self.grid[end.0][end.1] = Some(piece);
+            self.pieces.get_mut(&piece).unwrap().remove(&start);
+            self.pieces.get_mut(&piece).unwrap().insert(end);
+        }
 
         // move the rook in case of castling
         if piece == Piece::King(Color::White) && start == (0, 4) {
