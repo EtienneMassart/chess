@@ -19,8 +19,6 @@ fn test_check_pawn_move() {
 
     let board = Board { grid, pieces: Default::default() };
 
-    board.print();
-
     // Initial GameState
     let mut state = GameState {
         turn: Color::White,
@@ -57,8 +55,6 @@ fn test_check_knight_move() {
 
     let board = Board { grid, pieces: Default::default() };
 
-    board.print();
-
     assert!(board.check_knight_move((3, 3), (5, 4)), "White knight moves 2 squares forward and 1 square right");
     assert!(board.check_knight_move((3, 3), (5, 2)), "White knight moves 2 squares forward and 1 square left");
     assert!(board.check_knight_move((3, 3), (4, 5)), "White knight moves 1 square forward and 2 squares right");
@@ -89,8 +85,6 @@ fn test_check_bishop_move() {
     grid[0][7] = Some(Piece::Bishop(Color::White)); // White bishop at h1
 
     let board = Board { grid, pieces: Default::default() };
-
-    board.print();
 
     assert!(board.check_bishop_move((3, 3), (1, 1)), "White bishop moves 2 squares backward and 2 squares left");
     assert!(board.check_bishop_move((3, 3), (1, 5)), "White bishop moves 2 squares backward and 2 squares right");
@@ -124,8 +118,6 @@ fn test_check_rook_move() {
     grid[0][0] = Some(Piece::Rook(Color::White)); // White rook at a1
 
     let board = Board { grid, pieces: Default::default() };
-
-    board.print();
 
     assert!(board.check_rook_move((3, 3), (0, 3)), "White rook moves 3 squares backward");
     assert!(board.check_rook_move((3, 3), (3, 0)), "White rook moves 3 squares left");
@@ -217,7 +209,6 @@ fn test_check_king_move(){
 
     board.move_piece((2, 4), (2, 5)); // Move the black rook to f3 to cut castling on king side
 
-    board.print();
 
     assert!(!board.check_king_move((0, 4), (0, 6), &game_state), "White king can't castle kingside because of the rook at f3");
     assert!(board.check_king_move((0, 4), (0, 2), &game_state), "White king can castle queenside because the rook is not blocking");

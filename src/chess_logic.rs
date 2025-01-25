@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::{collections::{HashMap, HashSet}, fmt};
 use crate::game;
 
 
@@ -6,6 +6,17 @@ use crate::game;
 pub enum Color {
     White,
     Black,
+}
+
+impl fmt::Display for Color {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let color = match self {
+            Color::White => "white",
+            Color::Black => "black",
+        };
+        write!(f, "{}", color)
+    }
+    
 }
 
  
@@ -37,6 +48,33 @@ impl Piece {
 pub struct Board {
     pub grid: [[Option<Piece>; 8]; 8],
     pub pieces: HashMap<Piece, HashSet<(usize, usize)>>
+}
+
+impl fmt::Display for Board {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        for row in self.grid.iter().rev() {
+            for cell in row.iter() {
+                let symbol = match cell {
+                    Some(Piece::Pawn(Color::Black)) => "♙",
+                    Some(Piece::Knight(Color::Black)) => "♘",
+                    Some(Piece::Bishop(Color::Black)) => "♗",
+                    Some(Piece::Rook(Color::Black)) => "♖",
+                    Some(Piece::Queen(Color::Black)) => "♕",
+                    Some(Piece::King(Color::Black)) => "♔",
+                    Some(Piece::Pawn(Color::White)) => "♟",
+                    Some(Piece::Knight(Color::White)) => "♞",
+                    Some(Piece::Bishop(Color::White)) => "♝",
+                    Some(Piece::Rook(Color::White)) => "♜",
+                    Some(Piece::Queen(Color::White)) => "♛",
+                    Some(Piece::King(Color::White)) => "♚",                    
+                    None => " ",
+                };
+                write!(f, "{}", symbol)?;
+            }
+            writeln!(f, "")?;
+        }
+        Ok(())
+    }
 }
 
 impl Board {
@@ -111,29 +149,6 @@ impl Board {
         }
     }
 
-    pub fn print(&self) {
-        for row in self.grid.iter().rev() {
-            for cell in row.iter() {
-                match cell {
-                    Some(Piece::Pawn(Color::Black)) => print!("♙"),
-                    Some(Piece::Knight(Color::Black)) => print!("♘"),
-                    Some(Piece::Bishop(Color::Black)) => print!("♗"),
-                    Some(Piece::Rook(Color::Black)) => print!("♖"),
-                    Some(Piece::Queen(Color::Black)) => print!("♕"),
-                    Some(Piece::King(Color::Black)) => print!("♔"),
-                    Some(Piece::Pawn(Color::White)) => print!("♟"),
-                    Some(Piece::Knight(Color::White)) => print!("♞"),
-                    Some(Piece::Bishop(Color::White)) => print!("♝"),
-                    Some(Piece::Rook(Color::White)) => print!("♜"),
-                    Some(Piece::Queen(Color::White)) => print!("♛"),
-                    Some(Piece::King(Color::White)) => print!("♚"),                    
-                    None => print!(" "),
-                }
-            }
-            println!();
-        }
-    }
-}
 
     pub fn check_move(&self, start: (usize, usize), end: (usize, usize), game_state: &game::GameState) -> Result<(), &'static str> {
         if start.0 > 7 || start.1 > 7  {
