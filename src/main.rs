@@ -1,12 +1,14 @@
-use utils::parse_move;
-
+pub mod check_move;
+pub mod checkmate;
 pub mod chess_logic;
 pub mod game;
 pub mod utils;
 
 #[cfg(test)]
 mod tests {
-    mod check_move_test; // Include the test module
+    mod test_check_move; // Include the test module
+    mod test_utils;
+    mod test_checkmate;
 }
 
 //use utils::parse_move;
