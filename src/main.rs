@@ -1,18 +1,19 @@
-pub mod check_move;
-pub mod checkmate;
-pub mod chess_logic;
+pub mod move_validation;
+pub mod check_and_mate;
+pub mod core_struct;
+pub mod move_execution;
 pub mod game;
 pub mod utils;
 
 #[cfg(test)]
 mod tests {
-    mod test_check_move; // Include the test module
+    mod test_move_validation; // Include the test module
     mod test_utils;
-    mod test_checkmate;
+    mod test_check_and_mate;
 }
 
 //use utils::parse_move;
-use chess_logic::{Color, Piece};
+use core_struct::{Color, Piece};
 use macroquad::prelude::*;
 
 const BOARD_SIZE: f32 = 784.0; // Full board size including borders
@@ -104,12 +105,13 @@ async fn main() {
             {
                 let start = (start_y, start_x);
                 let end = (end_y, end_x);
-                if let Err(e) = game.make_move(start, end) {
+                if let Err(e) = game.play_move(start, end) {
                     println!("{}", e);
                 }
-
-                previous_selected = None;
-                selected = None;
+                else {
+                    previous_selected = None;
+                    selected = None;
+                }
             }
         }
 
