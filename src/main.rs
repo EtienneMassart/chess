@@ -1,19 +1,21 @@
-pub mod move_validation;
 pub mod check_and_mate;
 pub mod core_struct;
-pub mod move_execution;
 pub mod game;
+pub mod move_execution;
+pub mod move_validation;
+pub mod move_generation;
 pub mod utils;
 
 #[cfg(test)]
 mod tests {
+    mod test_check_and_mate;
     mod test_move_validation; // Include the test module
     mod test_utils;
-    mod test_check_and_mate;
 }
 
 //use utils::parse_move;
 use core_struct::{Color, Piece};
+use check_and_mate::EndgameStatus;
 use macroquad::prelude::*;
 
 const BOARD_SIZE: f32 = 784.0; // Full board size including borders
@@ -21,7 +23,18 @@ const BORDER_SIZE: f32 = 8.0; // Size of the border on each side
 const PLAYABLE_SIZE: f32 = BOARD_SIZE - BORDER_SIZE * 2.0; // Playable area size
 const TILE_SIZE: f32 = PLAYABLE_SIZE / 8.0; // Size of each square (96 pixels)
 
-#[macroquad::main("Chess Game")]
+// Define the window configuration
+fn window_conf() -> Conf {
+    Conf {
+        window_title: "Chess Game".to_string(),
+        window_width: 784, // Match the board size including borders
+        window_height: 784,
+        fullscreen: false, // Disable fullscreen (optional)
+        ..Default::default()
+    }
+}
+
+#[macroquad::main(window_conf)]
 async fn main() {
     // Load the chessboard texture
     let board_texture = load_texture("assets/8x8-board.png").await.unwrap();
@@ -107,12 +120,28 @@ async fn main() {
                 let end = (end_y, end_x);
                 if let Err(e) = game.play_move(start, end) {
                     println!("{}", e);
-                }
-                else {
+                } else {
                     previous_selected = None;
                     selected = None;
+
+                    // Check if the game is over TODO: Add a popup and a button to restart
+                    match game.board.evaluate_endgame(game.game_state.turn, &game.game_state) {
+                        EndgameStatus::Ongoing => {}
+                        EndgameStatus::Checkmate(Color::White) => {
+                            println!("Checkmate! Black wins!");
+                        }
+                        EndgameStatus::Checkmate(Color::Black) => {
+                            println!("Checkmate! White wins!");
+                        }
+                        EndgameStatus::Stalemate => {
+                            println!("Stalemate!");
+                        }
+                    }
+
                 }
             }
+
+            
         }
 
         next_frame().await;

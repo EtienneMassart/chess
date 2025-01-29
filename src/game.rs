@@ -65,10 +65,7 @@ impl Game {
             self.game_state.en_passant = None;
         }
 
-        self.game_state.turn = match self.game_state.turn {
-            Color::White => Color::Black,
-            Color::Black => Color::White,
-        };
+        self.game_state.turn = self.game_state.turn.opposite();
 
 
         self.board.execute_move(start, end);

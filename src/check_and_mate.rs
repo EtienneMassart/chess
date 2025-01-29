@@ -1,15 +1,19 @@
-use crate::core_struct::{Color, Piece, Board};
+use crate::core_struct::{Board, Color, Piece};
+use crate::game::GameState;
 
 impl Board {
-    pub fn can_pawn_take_king(&self, start: (usize, usize), end: (usize, usize), color: Color) -> bool {
+    pub fn can_pawn_take_king(
+        &self,
+        start: (usize, usize),
+        end: (usize, usize),
+        color: Color,
+    ) -> bool {
         // We only have to check normal take, a pawn can't en passant the king
         if color == Color::White {
-            return start.0 + 1 == end.0
-                && (start.1 == end.1 + 1 || start.1 + 1 == end.1)
+            return start.0 + 1 == end.0 && (start.1 == end.1 + 1 || start.1 + 1 == end.1);
         } else {
-            return start.0 == end.0 + 1
-                && (start.1 == end.1 + 1 || start.1 + 1 == end.1)
-        }      
+            return start.0 == end.0 + 1 && (start.1 == end.1 + 1 || start.1 + 1 == end.1);
+        }
     }
 
     pub fn can_king_take_king(&self, start: (usize, usize), end: (usize, usize)) -> bool {
@@ -19,8 +23,11 @@ impl Board {
         return x_diff <= 1 && y_diff <= 1;
     }
 
-    pub fn  is_king_in_check(&self, color: Color) -> Result<bool, &'static str> {
-        let king_positions = self.pieces.get(&(Piece::King(color))).ok_or("King not found")?;
+    pub fn is_king_in_check(&self, color: Color) -> Result<bool, &'static str> {
+        let king_positions = self
+            .pieces
+            .get(&(Piece::King(color)))
+            .ok_or("King not found")?;
         if king_positions.len() != 1 {
             return Err("Multiple or no kings found");
         }
@@ -29,7 +36,7 @@ impl Board {
         for (piece, positions) in &self.pieces {
             for pos in positions {
                 if piece.color() != color {
-                    match piece { 
+                    match piece {
                         Piece::Pawn(_) => {
                             if self.can_pawn_take_king(*pos, king_pos, piece.color()) {
                                 return Ok(true);
@@ -70,6 +77,34 @@ impl Board {
             }
         }
 
-        return Ok(false)
+        return Ok(false);
+    }
+
+    /// See if the color king is in checkmate or
+    pub fn evaluate_endgame(&mut self, color: Color, game_state: &GameState) -> EndgameStatus {
+        if !self.has_legal_moves(color, game_state) {
+            if self.is_king_in_check(color).unwrap() {
+                return EndgameStatus::Checkmate(color); // Checkmate
+            }
+            return EndgameStatus::Stalemate; // Stalemate
+        }
+        EndgameStatus::Ongoing // The game can continue
+    }
+}
+
+/// The status of the endgame. The color in the checkmate variant is the color that is checkmated and lost.
+#[derive(Debug, PartialEq)]
+pub enum EndgameStatus {
+    Checkmate(Color), // The color that is checkmated
+    Stalemate,
+    Ongoing,
+}
+
+impl EndgameStatus {
+    pub fn is_onegoing(&self) -> bool {
+        match self {
+            EndgameStatus::Ongoing => true,
+            _ => false,
+        }
     }
 }

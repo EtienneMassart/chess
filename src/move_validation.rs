@@ -1,18 +1,13 @@
 use crate::{
     core_struct::{Color, Piece, Board},
-    game,
+    game::GameState,
     utils::BiRange
 };
 
 impl Board {
     // For all these check functions, we already know that the start and end are valid and that the piece at the end is not the same color as the piece at the start
-    pub fn is_valid_pawn_move(
-        &self,
-        start: (usize, usize),
-        end: (usize, usize),
-        game_state: &game::GameState,
-    ) -> bool {
-        let color = game_state.turn;
+    pub fn is_valid_pawn_move(&self, start: (usize, usize), end: (usize, usize), game_state: &GameState) -> bool {
+        let color = self.grid[start.0][start.1].unwrap().color();
 
         if color == Color::White {
             // check if it's a normal take
@@ -160,7 +155,7 @@ impl Board {
         
     }
 
-    pub fn is_valid_king_move(&mut self, start: (usize, usize), end: (usize, usize), game_state: &game::GameState) -> bool {
+    pub fn is_valid_king_move(&mut self, start: (usize, usize), end: (usize, usize), game_state: &GameState) -> bool {
         // Check if the move is only one square away
         let x_diff = (start.0 as i8 - end.0 as i8).abs();
         let y_diff = (start.1 as i8 - end.1 as i8).abs();
@@ -172,20 +167,20 @@ impl Board {
         // If it is we need to check if the king is not in check, if the squares between the king and the rook are empty and if the rook and king haven't moved yet
         // As well as if the king doesn't move through check 
 
-        let color = game_state.turn;
-        if self.is_king_in_check(color).unwrap_or(true) {return false;}
+        let color = self.grid[start.0][start.1].unwrap().color();
+        if self.is_king_in_check(color).unwrap() {return false;}
         if color == Color::White && start == (0, 4) {
             if  end == (0, 6) && game_state.white_castle_king_side {
                 if self.grid[0][5].is_none() && self.grid[0][6].is_none() {
                     let (taken_piece, promotion) = self.execute_move(start, (0,5));
-                    let is_check = self.is_king_in_check(color).unwrap_or(true);
+                    let is_check = self.is_king_in_check(color).unwrap();
                     self.undo_move(start, (0, 5), taken_piece, promotion);
                     return !is_check;
                 }
             } else if end == (0, 2) && game_state.white_castle_queen_side {
                 if self.grid[0][3].is_none() && self.grid[0][2].is_none() && self.grid[0][1].is_none() { 
                     let (taken_piece, promotion) = self.execute_move(start, (0,3));
-                    let is_check = self.is_king_in_check(color).unwrap_or(true);
+                    let is_check = self.is_king_in_check(color).unwrap();
                     self.undo_move(start, (0, 3), taken_piece, promotion);
                     return !is_check;
                 }
@@ -195,14 +190,14 @@ impl Board {
             if  end == (7, 6) && game_state.black_castle_king_side {
                 if self.grid[7][5].is_none() && self.grid[7][6].is_none() {
                     let (taken_piece, promotion) = self.execute_move(start, (7,5));
-                    let is_check = self.is_king_in_check(color).unwrap_or(true);
+                    let is_check = self.is_king_in_check(color).unwrap();
                     self.undo_move(start, (7, 5), taken_piece, promotion);
                     return !is_check;
                 }
             } else if end == (7, 2) && game_state.black_castle_queen_side {
                 if self.grid[7][3].is_none() && self.grid[7][2].is_none() && self.grid[7][1].is_none() { 
                     let (taken_piece, promotion) = self.execute_move(start, (7,3));
-                    let is_check = self.is_king_in_check(color).unwrap_or(true);
+                    let is_check = self.is_king_in_check(color).unwrap();
                     self.undo_move(start, (7, 3), taken_piece, promotion);
                     return !is_check;
                 }
@@ -212,7 +207,7 @@ impl Board {
         return false;
     }
 
-    pub fn is_valid_move(&mut self, start: (usize, usize), end: (usize, usize), game_state: &game::GameState) -> Result<(), &'static str> {
+    pub fn is_valid_move(&mut self, start: (usize, usize), end: (usize, usize), game_state: &GameState) -> Result<(), &'static str> {
         if start.0 > 7 || start.1 > 7  {
             return Err("Start square out of bounds");
         }

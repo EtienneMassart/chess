@@ -146,7 +146,12 @@ fn test_king_move(){
     grid[3][3] = Some(Piece::King(Color::White)); // White king at d4
     grid[5][3] = Some(Piece::King(Color::Black)); // Black king at d6
 
-    let mut board = Board { grid, pieces: Default::default() };
+    let pieces = HashMap::from([
+        (Piece::King(Color::White), HashSet::from([(3, 3)])),
+        (Piece::King(Color::Black), HashSet::from([(5, 3)])),
+    ]);
+
+    let mut board = Board { grid, pieces: pieces };
 
     let game_state = GameState {
         turn: Color::White,
