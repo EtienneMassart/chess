@@ -33,14 +33,6 @@ impl Iterator for BiRange {
     }
 }
 
-pub fn is_valid_position(pos: (isize, isize)) -> Option<(usize, usize)> {
-    if pos.0 >= 0 && pos.0 < 8 && pos.1 >= 0 && pos.1 < 8 {
-        Some((pos.0 as usize, pos.1 as usize))
-    } else {
-        None
-    }
-}
-
 #[allow(dead_code)]
 pub fn parse_move(input: &str) -> Result<((usize, usize), (usize, usize)), &'static str> {
     let input: Vec<&str> = input.trim().split(" ").collect();
@@ -70,3 +62,7 @@ pub fn parse_move(input: &str) -> Result<((usize, usize), (usize, usize)), &'sta
 
     Ok((start, end))
 }
+
+#[cfg(test)]
+#[path = "tests/test_utils.rs"]
+mod test_utils;

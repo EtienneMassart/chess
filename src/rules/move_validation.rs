@@ -6,7 +6,7 @@ use crate::{
 
 impl Board {
     // For all these check functions, we already know that the start and end are valid and that the piece at the end is not the same color as the piece at the start
-    pub fn is_valid_pawn_move(&self, start: (usize, usize), end: (usize, usize), game_state: &GameState) -> bool {
+    fn is_valid_pawn_move(&self, start: (usize, usize), end: (usize, usize), game_state: &GameState) -> bool {
         let color = self.grid[start.0][start.1].unwrap().color();
 
         if color == Color::White {
@@ -94,14 +94,14 @@ impl Board {
         }
     }
 
-    pub fn is_valid_knight_move(&self, start: (usize, usize), end: (usize, usize)) -> bool {
+    pub(super) fn is_valid_knight_move(&self, start: (usize, usize), end: (usize, usize)) -> bool {
         // For this we only need to check that the end square is in a reachable square for a knight
         let x_diff = (start.0 as i8 - end.0 as i8).abs();
         let y_diff = (start.1 as i8 - end.1 as i8).abs();
         return (x_diff == 1 && y_diff == 2) || (x_diff == 2 && y_diff == 1);
     }
 
-    pub fn is_valid_bishop_move(&self, start: (usize, usize), end: (usize, usize)) -> bool {
+    pub(super) fn is_valid_bishop_move(&self, start: (usize, usize), end: (usize, usize)) -> bool {
         // Check if the move is diagonal
         let x_diff = (start.0 as i8 - end.0 as i8).abs();
         let y_diff = (start.1 as i8 - end.1 as i8).abs();
@@ -122,7 +122,7 @@ impl Board {
         return true;
     }
 
-    pub fn is_valid_rook_move(&self, start: (usize, usize), end: (usize, usize)) -> bool {
+    pub(super) fn is_valid_rook_move(&self, start: (usize, usize), end: (usize, usize)) -> bool {
         // Check if the move is vertical or horizontal
         if start.0 != end.0 && start.1 != end.1 {
             return false;
@@ -149,13 +149,13 @@ impl Board {
          
     }
 
-    pub fn is_valid_queen_move(&self, start: (usize, usize), end: (usize, usize)) -> bool {
+    pub(super) fn is_valid_queen_move(&self, start: (usize, usize), end: (usize, usize)) -> bool {
         // You only need to check if the move is a valid bishop or rook move
         return self.is_valid_bishop_move(start, end) || self.is_valid_rook_move(start, end);
         
     }
 
-    pub fn is_valid_king_move(&mut self, start: (usize, usize), end: (usize, usize), game_state: &GameState) -> bool {
+    fn is_valid_king_move(&mut self, start: (usize, usize), end: (usize, usize), game_state: &GameState) -> bool {
         // Check if the move is only one square away
         let x_diff = (start.0 as i8 - end.0 as i8).abs();
         let y_diff = (start.1 as i8 - end.1 as i8).abs();
@@ -207,7 +207,7 @@ impl Board {
         return false;
     }
 
-    pub fn is_valid_move(&mut self, start: (usize, usize), end: (usize, usize), game_state: &GameState) -> Result<(), &'static str> {
+    pub(crate) fn is_valid_move(&mut self, start: (usize, usize), end: (usize, usize), game_state: &GameState) -> Result<(), &'static str> {
         if start.0 > 7 || start.1 > 7  {
             return Err("Start square out of bounds");
         }
@@ -274,3 +274,6 @@ impl Board {
     }
 }
 
+#[cfg(test)]
+#[path = "../tests/test_move_validation.rs"]
+mod test_move_validation;

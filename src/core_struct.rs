@@ -51,9 +51,9 @@ impl Piece {
 
 
 #[derive(Debug, Clone)]
-pub struct Board {
-    pub grid: [[Option<Piece>; 8]; 8],
-    pub pieces: HashMap<Piece, HashSet<(usize, usize)>>
+pub(crate) struct Board {
+    pub(crate) grid: [[Option<Piece>; 8]; 8],
+    pub(crate) pieces: HashMap<Piece, HashSet<(usize, usize)>>
 }
 
 impl fmt::Display for Board {

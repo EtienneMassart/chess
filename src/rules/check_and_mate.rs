@@ -2,7 +2,7 @@ use crate::core_struct::{Board, Color, Piece};
 use crate::game::GameState;
 
 impl Board {
-    pub fn can_pawn_take_king(
+    fn can_pawn_take_king(
         &self,
         start: (usize, usize),
         end: (usize, usize),
@@ -16,14 +16,14 @@ impl Board {
         }
     }
 
-    pub fn can_king_take_king(&self, start: (usize, usize), end: (usize, usize)) -> bool {
+    fn can_king_take_king(&self, start: (usize, usize), end: (usize, usize)) -> bool {
         // Check if the move is only one square away, we don't need to check for castling because you can't take by castling
         let x_diff = (start.0 as i8 - end.0 as i8).abs();
         let y_diff = (start.1 as i8 - end.1 as i8).abs();
         return x_diff <= 1 && y_diff <= 1;
     }
 
-    pub fn is_king_in_check(&self, color: Color) -> Result<bool, &'static str> {
+    pub(super) fn is_king_in_check(&self, color: Color) -> Result<bool, &'static str> {
         let king_positions = self
             .pieces
             .get(&(Piece::King(color)))
@@ -81,8 +81,9 @@ impl Board {
     }
 
     /// See if the color king is in checkmate or
-    pub fn evaluate_endgame(&mut self, color: Color, game_state: &GameState) -> EndgameStatus {
-        if !self.has_legal_moves(color, game_state) {
+    pub(crate) fn evaluate_endgame(&mut self, game_state: &GameState) -> EndgameStatus {
+        let color = game_state.turn;
+        if !self.has_legal_moves(game_state) {
             if self.is_king_in_check(color).unwrap() {
                 return EndgameStatus::Checkmate(color); // Checkmate
             }
@@ -101,10 +102,14 @@ pub enum EndgameStatus {
 }
 
 impl EndgameStatus {
-    pub fn is_onegoing(&self) -> bool {
+    pub fn is_ongoing(&self) -> bool {
         match self {
             EndgameStatus::Ongoing => true,
             _ => false,
         }
     }
 }
+
+#[cfg(test)]
+#[path = "../tests/test_check_and_mate.rs"]
+mod test_check_and_mate;

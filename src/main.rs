@@ -1,21 +1,7 @@
-pub mod check_and_mate;
-pub mod core_struct;
-pub mod game;
-pub mod move_execution;
-pub mod move_validation;
-pub mod move_generation;
-pub mod utils;
-
-#[cfg(test)]
-mod tests {
-    mod test_check_and_mate;
-    mod test_move_validation; // Include the test module
-    mod test_utils;
-}
-
 //use utils::parse_move;
-use core_struct::{Color, Piece};
-use check_and_mate::EndgameStatus;
+use chess::core_struct::{Color, Piece};
+use chess::rules::EndgameStatus;
+use chess::game::Game;
 use macroquad::prelude::*;
 
 const BOARD_SIZE: f32 = 784.0; // Full board size including borders
@@ -54,7 +40,7 @@ async fn main() {
     let black_queen_texture = load_texture("assets/black-queen.png").await.unwrap();
     let black_king_texture = load_texture("assets/black-king.png").await.unwrap();
 
-    let mut game = game::Game::new();
+    let mut game = Game::new();
 
     let mut previous_selected: Option<(usize, usize)> = None;
     let mut selected: Option<(usize, usize)> = None;
@@ -69,7 +55,7 @@ async fn main() {
 
         for i in 0..8 {
             for j in 0..8 {
-                let piece = game.board.grid[i][j];
+                let piece = game.get_piece (i, j);
                 let texture = match piece {
                     Some(Piece::Pawn(Color::White)) => white_pawn_texture,
                     Some(Piece::Knight(Color::White)) => white_knight_texture,
@@ -125,7 +111,7 @@ async fn main() {
                     selected = None;
 
                     // Check if the game is over TODO: Add a popup and a button to restart
-                    match game.board.evaluate_endgame(game.game_state.turn, &game.game_state) {
+                    match game.evaluate_endgame() {
                         EndgameStatus::Ongoing => {}
                         EndgameStatus::Checkmate(Color::White) => {
                             println!("Checkmate! Black wins!");
@@ -140,8 +126,6 @@ async fn main() {
 
                 }
             }
-
-            
         }
 
         next_frame().await;

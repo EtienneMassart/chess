@@ -1,8 +1,8 @@
-use crate::core_struct::{self, Color, Piece};
+use crate::{core_struct::{self, Color, Piece}, rules::EndgameStatus};
 
 
 #[derive(Debug)]
-pub struct GameState {
+pub(crate) struct GameState {
     pub turn: core_struct::Color,
     pub white_castle_king_side: bool,
     pub black_castle_king_side: bool,
@@ -13,8 +13,8 @@ pub struct GameState {
 
 #[derive(Debug)]
 pub struct Game {
-    pub board: core_struct::Board,
-    pub game_state: GameState,
+    board: core_struct::Board,
+    game_state: GameState,
 }
 
 impl Game {
@@ -30,6 +30,10 @@ impl Game {
                 en_passant: None,
             },
         }
+    }
+
+    pub fn get_piece(&self, i: usize, j: usize) -> Option<Piece> {
+        self.board.grid[i][j]
     }
     
 
@@ -71,5 +75,13 @@ impl Game {
         self.board.execute_move(start, end);
 
         Ok(())
+    }
+
+    pub fn evaluate_endgame(&mut self) -> EndgameStatus {
+        self.board.evaluate_endgame(&self.game_state)
+    }
+
+    pub fn get_legal_moves(&mut self, start: (usize, usize)) -> Vec<(usize, usize)> {
+        self.board.get_legal_moves(start, &self.game_state)
     }
 }

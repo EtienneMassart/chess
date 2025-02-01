@@ -1,4 +1,4 @@
-use crate::check_and_mate::EndgameStatus;
+use super::EndgameStatus;
 use crate::core_struct::{Board, Color, Piece};
 use crate::game::GameState;
 use std::collections::{HashMap, HashSet};
@@ -192,7 +192,7 @@ fn test_evaluate_endgame() {
     let mut board = Board { grid, pieces };
 
     assert_eq!(
-        board.evaluate_endgame(Color::Black, &game_state),
+        board.evaluate_endgame(&game_state),
         EndgameStatus::Checkmate(Color::Black),
         "White wins by checkmate with queen"
     );
@@ -211,7 +211,7 @@ fn test_evaluate_endgame() {
     let mut board = Board { grid, pieces };
 
     assert_eq!(
-        board.evaluate_endgame(Color::Black, &game_state),
+        board.evaluate_endgame(&game_state),
         EndgameStatus::Ongoing,
         "No checkmate"
     );
@@ -232,7 +232,7 @@ fn test_evaluate_endgame() {
     let mut board = Board { grid, pieces };
 
     assert_eq!(
-        board.evaluate_endgame(Color::Black, &game_state),
+        board.evaluate_endgame(&game_state),
         EndgameStatus::Checkmate(Color::Black),
         "White wins by checkmate with queen and bishop"
     );
@@ -253,7 +253,7 @@ fn test_evaluate_endgame() {
     let mut board = Board { grid, pieces };
 
     assert_eq!(
-        board.evaluate_endgame(Color::Black, &game_state),
+        board.evaluate_endgame(&game_state),
         EndgameStatus::Checkmate(Color::Black),
         "White wins by smothered checkmate"
     );
@@ -276,7 +276,7 @@ fn test_evaluate_endgame() {
     let mut board = Board { grid, pieces };
 
     assert_eq!(
-        board.evaluate_endgame(Color::Black, &game_state),
+        board.evaluate_endgame(&game_state),
         EndgameStatus::Checkmate(Color::Black),
         "White wins by back rank checkmate"
     );
@@ -300,7 +300,7 @@ fn test_evaluate_endgame() {
     let mut board = Board { grid, pieces };
 
     assert_eq!(
-        board.evaluate_endgame(Color::Black, &game_state),
+        board.evaluate_endgame(&game_state),
         EndgameStatus::Stalemate,
         "Stalemate—Black has no legal moves"
     );

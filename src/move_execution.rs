@@ -2,7 +2,7 @@ use crate::core_struct::{Color, Piece, Board};
 
 impl Board {
     /// Should only be used if we know there is a piece at start
-    pub fn execute_move(
+    pub(crate) fn execute_move(
         &mut self,
         start: (usize, usize),
         end: (usize, usize),
@@ -102,7 +102,7 @@ impl Board {
         result
     }
 
-    pub fn undo_move(
+    pub(crate) fn undo_move(
         &mut self,
         start: (usize, usize),
         end: (usize, usize),
