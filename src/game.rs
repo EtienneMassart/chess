@@ -32,7 +32,7 @@ impl Game {
         }
     }
 
-    pub fn get_piece(&self, i: usize, j: usize) -> Option<Piece> {
+    pub fn piece_at(&self, i: usize, j: usize) -> Option<Piece> {
         self.board.grid[i][j]
     }
     

@@ -1,7 +1,7 @@
 //use utils::parse_move;
-use chess::core_struct::{Color, Piece};
-use chess::rules::EndgameStatus;
-use chess::game::Game;
+use chess_core::core_struct::{Color, Piece};
+use chess_core::rules::EndgameStatus;
+use chess_core::game::Game;
 use macroquad::prelude::*;
 
 const BOARD_SIZE: f32 = 784.0; // Full board size including borders
@@ -55,7 +55,7 @@ async fn main() {
 
         for i in 0..8 {
             for j in 0..8 {
-                let piece = game.get_piece (i, j);
+                let piece = game.piece_at(i, j);
                 let texture = match piece {
                     Some(Piece::Pawn(Color::White)) => white_pawn_texture,
                     Some(Piece::Knight(Color::White)) => white_knight_texture,
