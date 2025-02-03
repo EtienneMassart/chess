@@ -18,7 +18,9 @@ pub struct Textures {
     pub black_rook: Texture2D,
     pub black_queen: Texture2D,
     pub black_king: Texture2D,
-}
+    pub no_piece: Texture2D,
+    pub is_piece: Texture2D,
+    }
 
 pub async fn load_textures() -> Result<Textures, String> {
     // Use .await? if you want to propagate errors, here I'm using unwrap-style for brevity
@@ -38,6 +40,9 @@ pub async fn load_textures() -> Result<Textures, String> {
     let black_queen = load_texture("assets/black-queen.png").await.map_err(|e| e.to_string())?;
     let black_king = load_texture("assets/black-king.png").await.map_err(|e| e.to_string())?;
 
+    let no_piece = load_texture("assets/highlight_circle.png").await.map_err(|e| e.to_string())?;
+    let is_piece = load_texture("assets/hollow_circle.png").await.map_err(|e| e.to_string())?;
+
     Ok(Textures {
         board,
         white_pawn,
@@ -52,6 +57,8 @@ pub async fn load_textures() -> Result<Textures, String> {
         black_rook,
         black_queen,
         black_king,
+        no_piece,
+        is_piece,
     })
 }
 
@@ -110,5 +117,40 @@ pub fn select_square(previous_selected: &mut Option<(usize, usize)>, selected: &
         let col = ((mouse_pos.0 - BORDER_SIZE) / TILE_SIZE) as usize;
         let row = 7 - ((mouse_pos.1 - BORDER_SIZE) / TILE_SIZE) as usize;
         *selected = Some((row, col));
+    }
+}
+
+pub fn show_legal_moves(game: &mut Game, selected: Option<(usize, usize)>, textures: &Textures) {
+    if let Some((row, col)) = selected {
+        if game.piece_at(row, col).is_some() {
+            let legal_moves = game.get_legal_moves((row, col));
+            for (r, c) in legal_moves {
+                let x = BORDER_SIZE + c as f32 * TILE_SIZE;
+                let y = BORDER_SIZE + (7 - r) as f32 * TILE_SIZE;
+                if game.piece_at(r, c).is_some() {
+                    draw_texture_ex(
+                        textures.is_piece, 
+                        x, 
+                        y,
+                        WHITE, 
+                        DrawTextureParams {
+                            dest_size: Some(vec2(TILE_SIZE, TILE_SIZE)),
+                            ..Default::default()
+                        }
+                    );
+                } else {
+                    draw_texture_ex(
+                        textures.no_piece, 
+                        x, 
+                        y,
+                        WHITE, 
+                        DrawTextureParams {
+                            dest_size: Some(vec2(TILE_SIZE, TILE_SIZE)),
+                            ..Default::default()
+                        }
+                    );
+                }
+            }
+        }
     }
 }

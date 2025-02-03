@@ -67,6 +67,8 @@ async fn main() {
             }
         }
 
+        gui::show_legal_moves(&mut game, selected, &textures);
+
         next_frame().await;
     }
 }

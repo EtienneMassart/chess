@@ -80,7 +80,7 @@ impl Game {
     pub fn evaluate_endgame(&mut self) -> EndgameStatus {
         self.board.evaluate_endgame(&self.game_state)
     }
-
+    /// Only if we know there is a piece at start
     pub fn get_legal_moves(&mut self, start: (usize, usize)) -> Vec<(usize, usize)> {
         self.board.get_legal_moves(start, &self.game_state)
     }

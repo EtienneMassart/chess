@@ -3,7 +3,7 @@ use crate::game::GameState;
 
 impl Board {
     fn generate_pawn_moves(&self, start: (usize, usize), color: Color) -> Vec<(usize, usize)> {
-        let direction = if color == Color::White { -1 } else { 1 };
+        let direction = if color == Color::White { 1 } else { -1 };
 
         // Potential moves in `isize`
         let potential_moves = vec![
@@ -96,6 +96,8 @@ impl Board {
             (start.0 as isize + 1, start.1 as isize - 1),
             (start.0 as isize + 1, start.1 as isize),
             (start.0 as isize + 1, start.1 as isize + 1),
+            (start.0 as isize, start.1 as isize - 2),
+            (start.0 as isize, start.1 as isize + 2),
         ];
 
         potential_moves.into_iter()
