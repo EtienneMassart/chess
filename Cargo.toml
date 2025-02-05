@@ -4,3 +4,5 @@ members = [
     "chess_server",
     "chess_client"
 ]
+
+resolver = "1"

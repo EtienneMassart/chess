@@ -1,7 +1,11 @@
-pub mod rules;
-pub mod core_struct;
-pub mod game;
+mod rules;
+mod core_struct;
+mod game;
 mod move_execution;
 mod move_generation;
 mod utils;
+
+pub use core_struct::{Color, Piece};
+pub use game::{Game, PromotionPiece};
+pub use rules::EndgameStatus;
 

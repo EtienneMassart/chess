@@ -26,6 +26,7 @@ fn test_pawn_move() {
         white_castle_queen_side: true,
         black_castle_queen_side: true,
         en_passant: Some((2, Color::Black)), // Black pawn made a 2-square move to (4, 3)
+        ..Default::default()
     };
 
     assert!(board.is_valid_pawn_move((1, 0), (2, 0), &state),"White pawn moves 1 square forward");
@@ -153,14 +154,7 @@ fn test_king_move(){
 
     let mut board = Board { grid, pieces: pieces };
 
-    let game_state = GameState {
-        turn: Color::White,
-        white_castle_king_side: true,
-        black_castle_king_side: true,
-        white_castle_queen_side: true,
-        black_castle_queen_side: true,
-        en_passant: None,
-    };
+    let game_state = Default::default();
 
     assert!(board.is_valid_king_move((3, 3), (2, 2), &game_state), "White king moves 1 square backward and 1 square left");
     assert!(board.is_valid_king_move((3, 3), (2, 3), &game_state), "White king moves 1 square backward");
@@ -193,14 +187,7 @@ fn test_king_move(){
 
     let mut board = Board { grid, pieces };
 
-    let mut game_state = GameState {
-        turn: Color::White,
-        white_castle_king_side: true,
-        black_castle_king_side: true,
-        white_castle_queen_side: true,
-        black_castle_queen_side: true,
-        en_passant: None,
-    };
+    let mut game_state = Default::default();
 
     assert!(board.is_valid_king_move((0, 4), (0, 6), &game_state), "White king castles kingside");
     assert!(board.is_valid_king_move((0, 4), (0, 2), &game_state), "White king castles queenside");

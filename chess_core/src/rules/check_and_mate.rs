@@ -94,7 +94,7 @@ impl Board {
 }
 
 /// The status of the endgame. The color in the checkmate variant is the color that is checkmated and lost.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum EndgameStatus {
     Checkmate(Color), // The color that is checkmated
     Stalemate,

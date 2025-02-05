@@ -18,38 +18,10 @@ impl Board {
             result.0 = Some((taken_piece, end));
         }
 
-        // promotion of pawn, for now always promote to queen TODO: let player choose
-
-        if piece == Piece::Pawn(Color::White) && end.0 == 7 {
-            self.grid[start.0][start.1] = None;
-            self.grid[end.0][end.1] = Some(Piece::Queen(Color::White));
-            self.pieces
-                .get_mut(&Piece::Pawn(Color::White))
-                .unwrap()
-                .remove(&start);
-            self.pieces
-                .get_mut(&Piece::Queen(Color::White))
-                .unwrap()
-                .insert(end);
-            result.1 = true;
-        } else if piece == Piece::Pawn(Color::Black) && end.0 == 0 {
-            self.grid[start.0][start.1] = None;
-            self.grid[end.0][end.1] = Some(Piece::Queen(Color::Black));
-            self.pieces
-                .get_mut(&Piece::Pawn(Color::Black))
-                .unwrap()
-                .remove(&start);
-            self.pieces
-                .get_mut(&Piece::Queen(Color::Black))
-                .unwrap()
-                .insert(end);
-            result.1 = true;
-        } else {
-            self.grid[start.0][start.1] = None;
-            self.grid[end.0][end.1] = Some(piece);
-            self.pieces.get_mut(&piece).unwrap().remove(&start);
-            self.pieces.get_mut(&piece).unwrap().insert(end);
-        }
+        self.grid[start.0][start.1] = None;
+        self.grid[end.0][end.1] = Some(piece);
+        self.pieces.get_mut(&piece).unwrap().remove(&start);
+        self.pieces.get_mut(&piece).unwrap().insert(end);
 
         // move the rook in case of castling
         if piece == Piece::King(Color::White) && start == (0, 4) {

@@ -175,7 +175,7 @@ fn test_evaluate_endgame() {
         white_castle_queen_side: false,
         black_castle_king_side: false,
         black_castle_queen_side: false,
-        en_passant: None,
+        ..Default::default()
     };
 
     let mut grid = [[None; 8]; 8];
