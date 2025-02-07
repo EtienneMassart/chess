@@ -84,8 +84,8 @@ async fn main() {
             }
 
             if let (Some(start), Some(end)) = (previous_selected, selected) {
-                if let Err(e) = game.play_move(start, end) {
-                    println!("{}", e);
+                if let Err(_e) = game.play_move(start, end) {
+                    //println!("{}", _e);
                 } else {
                     previous_selected = None;
                     selected = None;

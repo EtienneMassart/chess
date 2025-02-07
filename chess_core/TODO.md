@@ -1,12 +1,9 @@
 
 FOR CHESS LOGIC
-- Implement checkmate and stalemate verification
-- Implement promotion choice
-- Implement 50 moves rule etc
 
 FOR GUI
+- Add a menu to resign, offer draw, etc.
 - Add sound
-- Add popup/message for wins
 
 FOR MULTIPLAYER
 - Implement server and client architecture

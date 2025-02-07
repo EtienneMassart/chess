@@ -85,19 +85,46 @@ impl Board {
         let color = game_state.turn;
         if !self.has_legal_moves(game_state) {
             if self.is_king_in_check(color).unwrap() {
-                return EndgameStatus::Checkmate(color); // Checkmate
+                return EndgameStatus::Win(color.opposite()); // Checkmate
             }
-            return EndgameStatus::Stalemate; // Stalemate
+            return EndgameStatus::Draw; // Stalemate
         }
         EndgameStatus::Ongoing // The game can continue
     }
+
+    pub(crate) fn is_insufficient_material(&self) -> bool {
+        // It's a draw if each side has only a king, or a king and a knight, or a king and a bishop (i.e a king and a minor piece)
+        let mut white_minor_pieces = 0;
+        let mut black_minor_pieces = 0;
+
+        for i in 0..8 {
+            for j in 0..8 {
+                if let Some(piece) = self.grid[i][j] {
+                    match piece {
+                        Piece::Knight(Color::White) | Piece::Bishop(Color::White) => {white_minor_pieces += 1},
+                        Piece::Knight(Color::Black) | Piece::Bishop(Color::Black) => {black_minor_pieces += 1},
+                        Piece::King(_) => continue,
+                        _ => return false,
+                    }
+                }
+            }
+        }
+
+        if white_minor_pieces <= 1 && black_minor_pieces <= 1 {
+            return true;
+        }
+        false
+    }
+
+
+
 }
 
 /// The status of the endgame. The color in the checkmate variant is the color that is checkmated and lost.
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum EndgameStatus {
-    Checkmate(Color), // The color that is checkmated
-    Stalemate,
+    Win(Color),
+    Draw,
     Ongoing,
 }
 

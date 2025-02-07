@@ -205,9 +205,9 @@ pub fn draw_game_over_box(should_quit: &Cell<bool>, game: &mut Game) {
     let box_y = (BOARD_SIZE - box_height) / 2.0;
 
     let winner_text = match game.endgame_status() {
-        EndgameStatus::Stalemate => "It's a draw!",
-        EndgameStatus::Checkmate(Color::White) => "Black wins!",
-        EndgameStatus::Checkmate(Color::Black) => "White wins!",
+        EndgameStatus::Draw => "It's a draw!",
+        EndgameStatus::Win(Color::White) => "White wins!",
+        EndgameStatus::Win(Color::Black) => "Black wins!",
         _ => "",
     };
 

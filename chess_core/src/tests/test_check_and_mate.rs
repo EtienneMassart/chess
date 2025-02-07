@@ -193,7 +193,7 @@ fn test_evaluate_endgame() {
 
     assert_eq!(
         board.evaluate_endgame(&game_state),
-        EndgameStatus::Checkmate(Color::Black),
+        EndgameStatus::Win(Color::White),
         "White wins by checkmate with queen"
     );
 
@@ -233,7 +233,7 @@ fn test_evaluate_endgame() {
 
     assert_eq!(
         board.evaluate_endgame(&game_state),
-        EndgameStatus::Checkmate(Color::Black),
+        EndgameStatus::Win(Color::White),
         "White wins by checkmate with queen and bishop"
     );
 
@@ -254,7 +254,7 @@ fn test_evaluate_endgame() {
 
     assert_eq!(
         board.evaluate_endgame(&game_state),
-        EndgameStatus::Checkmate(Color::Black),
+        EndgameStatus::Win(Color::White),
         "White wins by smothered checkmate"
     );
 
@@ -277,7 +277,7 @@ fn test_evaluate_endgame() {
 
     assert_eq!(
         board.evaluate_endgame(&game_state),
-        EndgameStatus::Checkmate(Color::Black),
+        EndgameStatus::Win(Color::White),
         "White wins by back rank checkmate"
     );
 
@@ -301,7 +301,7 @@ fn test_evaluate_endgame() {
 
     assert_eq!(
         board.evaluate_endgame(&game_state),
-        EndgameStatus::Stalemate,
+        EndgameStatus::Draw,
         "Stalemate—Black has no legal moves"
     );
 
