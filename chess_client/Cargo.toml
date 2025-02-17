@@ -4,3 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+chess_core = { path = "../chess_core" }
+chess_network = { path = "../chess_network" }
+tokio = { version = "1", features = ["full"] }
+macroquad="0.4.0"
