@@ -1,6 +1,7 @@
 use super::EndgameStatus;
 use crate::core_struct::{Board, Color, Piece};
 use crate::game::GameState;
+use crate::{DrawReason, WinReason};
 use std::collections::{HashMap, HashSet};
 
 #[test]
@@ -193,7 +194,7 @@ fn test_evaluate_endgame() {
 
     assert_eq!(
         board.evaluate_endgame(&game_state),
-        EndgameStatus::Win(Color::White),
+        EndgameStatus::Win(Color::White, WinReason::Checkmate),
         "White wins by checkmate with queen"
     );
 
@@ -233,7 +234,7 @@ fn test_evaluate_endgame() {
 
     assert_eq!(
         board.evaluate_endgame(&game_state),
-        EndgameStatus::Win(Color::White),
+        EndgameStatus::Win(Color::White, WinReason::Checkmate),
         "White wins by checkmate with queen and bishop"
     );
 
@@ -254,7 +255,7 @@ fn test_evaluate_endgame() {
 
     assert_eq!(
         board.evaluate_endgame(&game_state),
-        EndgameStatus::Win(Color::White),
+        EndgameStatus::Win(Color::White, WinReason::Checkmate),
         "White wins by smothered checkmate"
     );
 
@@ -277,7 +278,7 @@ fn test_evaluate_endgame() {
 
     assert_eq!(
         board.evaluate_endgame(&game_state),
-        EndgameStatus::Win(Color::White),
+        EndgameStatus::Win(Color::White, WinReason::Checkmate),
         "White wins by back rank checkmate"
     );
 
@@ -301,7 +302,7 @@ fn test_evaluate_endgame() {
 
     assert_eq!(
         board.evaluate_endgame(&game_state),
-        EndgameStatus::Draw,
+        EndgameStatus::Draw(DrawReason::Stalemate),
         "Stalemate—Black has no legal moves"
     );
 

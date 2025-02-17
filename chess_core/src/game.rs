@@ -1,8 +1,9 @@
-use std::{collections::HashMap, fmt, hash::Hash};
+use std::{collections::HashMap, hash::Hash};
+use serde::{Serialize, Deserialize};
 
-use crate::{core_struct::{self, Color, Piece}, rules::EndgameStatus};
+use crate::{core_struct::{self, Color, Piece}, rules::{EndgameStatus, WinReason, DrawReason}};
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub enum PromotionPiece {
     Queen,
     Rook,
@@ -217,17 +218,17 @@ impl Game {
     /// Returns the endgame status of the game: ongoing, checkmate or stalemate
     pub fn evaluate_endgame(&mut self) -> EndgameStatus {
         if self.game_state.how_many_moves >= 100 {
-            self.game_state.endgame_status = EndgameStatus::Draw;
-            return EndgameStatus::Draw;
+            self.game_state.endgame_status = EndgameStatus::Draw(DrawReason::FiftyMoveRule);
+            return EndgameStatus::Draw(DrawReason::FiftyMoveRule);
         }
         if self.positions.values().any(|&v| v >= 3) {
-            self.game_state.endgame_status = EndgameStatus::Draw;
-            return EndgameStatus::Draw;
+            self.game_state.endgame_status = EndgameStatus::Draw(DrawReason::ThreefoldRepetition);
+            return EndgameStatus::Draw(DrawReason::ThreefoldRepetition);
         }
 
         if self.board.is_insufficient_material() {
-            self.game_state.endgame_status = EndgameStatus::Draw;
-            return EndgameStatus::Draw;
+            self.game_state.endgame_status = EndgameStatus::Draw(DrawReason::InsufficientMaterial);
+            return EndgameStatus::Draw(DrawReason::InsufficientMaterial);
         }
 
         let endgame_status = self.board.evaluate_endgame(&self.game_state);

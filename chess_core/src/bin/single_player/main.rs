@@ -4,9 +4,10 @@ mod utils;
 
 use std::cell::Cell;
 
-//use utils::parse_move;
 use chess_core::Game;
-use macroquad::{prelude::*, ui::{root_ui, Skin}};
+use macroquad::prelude::{
+    clear_background, is_mouse_button_pressed, next_frame, Conf, MouseButton, WHITE,
+};
 
 // Define the window configuration
 fn window_conf() -> Conf {
@@ -30,26 +31,7 @@ async fn main() {
 
     let should_quit = Cell::new(false);
 
-    let button_style = root_ui()
-        .style_builder()
-        .color(GREEN)
-        .margin(RectOffset::new(20.0, 20.0, 10.0, 10.0)) 
-        .font_size(30)
-        .build();
-
-    let label_style = root_ui()
-        .style_builder()
-        .font_size(40)
-        .build();
-
-    let ui_skin = Skin {
-        button_style,
-        label_style,
-        ..root_ui().default_skin()
-    };
-
-    root_ui().push_skin(&ui_skin);
-
+    gui::create_skin();
 
     loop {
         clear_background(WHITE);
@@ -92,7 +74,7 @@ async fn main() {
 
                     game.evaluate_endgame(); // Check if the game is over, will set endgame_status
                 }
-            }            
+            }
         }
 
         if game.endgame_status() != chess_core::EndgameStatus::Ongoing {
@@ -102,7 +84,7 @@ async fn main() {
         if should_quit.get() {
             break;
         }
-    
+
         gui::show_legal_moves(&mut game, selected, &textures);
 
         next_frame().await;

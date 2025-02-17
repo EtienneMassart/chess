@@ -7,5 +7,6 @@ mod utils;
 
 pub use core_struct::{Color, Piece};
 pub use game::{Game, PromotionPiece};
-pub use rules::EndgameStatus;
+pub use rules::{EndgameStatus, DrawReason, WinReason};
+pub use utils::parse_move;
 

@@ -33,7 +33,7 @@ impl Iterator for BiRange {
     }
 }
 
-#[allow(dead_code)]
+
 pub fn parse_move(input: &str) -> Result<((usize, usize), (usize, usize)), &'static str> {
     let input: Vec<&str> = input.trim().split(" ").collect();
     if input.len() != 2 {

@@ -1,5 +1,5 @@
 use chess_core::{Color, PromotionPiece};
-use crate::constants::{BOARD_SIZE, BORDER_SIZE, TILE_SIZE, PLAYABLE_SIZE};
+use crate::constants::{BORDER_SIZE, TILE_SIZE, PLAYABLE_SIZE};
 use macroquad::prelude::*;
 
 pub fn select_promotion_piece(square: (usize, usize),column: usize, color: Color) -> Option<PromotionPiece> {

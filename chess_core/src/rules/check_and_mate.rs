@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use crate::core_struct::{Board, Color, Piece};
 use crate::game::GameState;
 
@@ -85,9 +86,9 @@ impl Board {
         let color = game_state.turn;
         if !self.has_legal_moves(game_state) {
             if self.is_king_in_check(color).unwrap() {
-                return EndgameStatus::Win(color.opposite()); // Checkmate
+                return EndgameStatus::Win(color.opposite(), WinReason::Checkmate); // Checkmate
             }
-            return EndgameStatus::Draw; // Stalemate
+            return EndgameStatus::Draw(DrawReason::Stalemate); // Stalemate
         }
         EndgameStatus::Ongoing // The game can continue
     }
@@ -121,10 +122,10 @@ impl Board {
 }
 
 /// The status of the endgame. The color in the checkmate variant is the color that is checkmated and lost.
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Serialize, Deserialize)]
 pub enum EndgameStatus {
-    Win(Color),
-    Draw,
+    Win(Color, WinReason),
+    Draw(DrawReason),
     Ongoing,
 }
 
@@ -135,6 +136,22 @@ impl EndgameStatus {
             _ => false,
         }
     }
+}
+
+#[derive(Debug, PartialEq, Clone, Copy, Serialize, Deserialize)]
+pub enum DrawReason {
+    Agreement,
+    Stalemate,
+    InsufficientMaterial,
+    ThreefoldRepetition,
+    FiftyMoveRule,
+}
+
+#[derive(Debug, PartialEq, Clone, Copy, Serialize, Deserialize)]
+pub enum WinReason {
+    Checkmate,
+    Resignation,
+    Timeout,
 }
 
 #[cfg(test)]

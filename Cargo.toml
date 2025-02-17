@@ -2,7 +2,8 @@
 members = [
     "chess_core",
     "chess_server",
-    "chess_client"
-]
+    "chess_client",
+    "chess_network",
+    ]
 
-resolver = "1"
+resolver = "2"
